@@ -10,20 +10,20 @@ public static class Program
 
     public static void Main()
     {
-        var tectonic = new Tectonic(Tectonic.Small20240819);
+        // var model = new Tectonic(Tectonic.Large20240522);
 
-        var solver = new Solver(tectonic);
+        var model = new Sudoku(Sudoku.Puzzle3x3Unreasonable);
 
-        var solutions = solver.Solve().ToList();
+        var solver = new Solver(model);
 
-        // Print
-        Console.WriteLine($"{solutions.Count} solution(s)");
-        if (solutions.Count == 0) return;
-
-        foreach (var solution in solutions)
+        var solution = solver.Solve().FirstOrDefault();
+        
+        if (solution == null)
         {
-            Console.WriteLine();
-            tectonic.PrintSolution(solution);
+            Console.WriteLine("No solution");
+            return;
         }
+
+        model.PrintSolution(solution);
     }
 }
