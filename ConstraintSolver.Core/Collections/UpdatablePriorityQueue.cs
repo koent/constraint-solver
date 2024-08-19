@@ -1,20 +1,19 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace ConstraintSolver.Core.Collections;
 
 // Based on https://github.com/eiriktsarpalis/pq-tests/blob/master/PriorityQueue/PrioritySet.cs
 
-public class UpdatablePriorityQueue<T> : IReadOnlyCollection<T>
+public class UpdatablePriorityQueue<T>
 {
     private const int DefaultCapacity = 4;
 
     private readonly Dictionary<T, int> _index;
 
     private HeapEntry[] _heap;
+    
     private int _count = 0;
 
     public UpdatablePriorityQueue()
@@ -220,52 +219,6 @@ public class UpdatablePriorityQueue<T> : IReadOnlyCollection<T>
         {
             element = Element;
             priority = Priority;
-        }
-    }
-
-    public IEnumerator<T> GetEnumerator() => new Enumerator(this);
-
-    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
-
-    public struct Enumerator : IEnumerator<T>, IEnumerator
-    {
-        private readonly UpdatablePriorityQueue<T> _queue;
-        private int _index;
-        private T _current;
-
-        internal Enumerator(UpdatablePriorityQueue<T> queue)
-        {
-            _queue = queue;
-            _index = 0;
-            _current = default;
-        }
-
-        public T Current => _current;
-        object IEnumerator.Current => _current;
-
-        public bool MoveNext()
-        {
-            var queue = _queue;
-
-            if (_index < queue._count)
-            {
-                ref HeapEntry entry = ref queue._heap[_index];
-                _current = entry.Element;
-                _index++;
-                return true;
-            }
-
-            return false;
-        }
-
-        public void Dispose()
-        {
-        }
-
-        public void Reset()
-        {
-            _index = 0;
-            _current = default;
         }
     }
 }
