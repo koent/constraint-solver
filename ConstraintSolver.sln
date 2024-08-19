@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConstraintSolver.Core", "ConstraintSolver.Core\ConstraintSolver.Core.csproj", "{571B900C-6F4D-4AC3-A619-E7E9361CD70B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConstraintSolver.Examples", "ConstraintSolver.Examples\ConstraintSolver.Examples.csproj", "{033D2EBE-9EE5-4393-8322-6EF2C33497D2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{571B900C-6F4D-4AC3-A619-E7E9361CD70B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{571B900C-6F4D-4AC3-A619-E7E9361CD70B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{571B900C-6F4D-4AC3-A619-E7E9361CD70B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{571B900C-6F4D-4AC3-A619-E7E9361CD70B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{033D2EBE-9EE5-4393-8322-6EF2C33497D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{033D2EBE-9EE5-4393-8322-6EF2C33497D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{033D2EBE-9EE5-4393-8322-6EF2C33497D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{033D2EBE-9EE5-4393-8322-6EF2C33497D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
