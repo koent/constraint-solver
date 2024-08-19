@@ -6,7 +6,7 @@ namespace ConstraintSolver.Core.Solving;
 
 public class Solver
 {
-    private Stack<SearchSpace> _searchSpaces = [];
+    private readonly Stack<SearchSpace> _searchSpaces = [];
 
     public Solver(Model model)
     {
@@ -15,7 +15,7 @@ public class Solver
 
     public IEnumerable<Solution> Solve()
     {
-        while (_searchSpaces.Any())
+        while (_searchSpaces.Count != 0)
         {
             var searchSpace = _searchSpaces.Pop();
             var (propagators, store) = searchSpace.Propagate();

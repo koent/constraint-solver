@@ -8,13 +8,13 @@ namespace ConstraintSolver.Core.Solving;
 
 public class SearchSpace
 {
-    private Store _store;
+    private readonly Store _store;
 
-    private Queue<IPropagator> _active = [];
+    private readonly Queue<IPropagator> _active = [];
 
-    private LinkedList<IPropagator> _atFixpoint = [];
+    private readonly LinkedList<IPropagator> _atFixpoint = [];
 
-    private List<IPropagator> _subsumed = [];
+    private readonly List<IPropagator> _subsumed = [];
 
     private readonly int _depth;
     public int Depth => _depth;
@@ -52,8 +52,6 @@ public class SearchSpace
     {
         _depth = depth;
         _store = new Store(store);
-        // _active = new Queue<IPropagator>(propagators);
-        // _store.Branch(branchIndex);
 
         var branchVariable = _store.Branch(branchIndex);
         var branchVariableIndex = _store.Variables.IndexOf(branchVariable);
@@ -72,9 +70,6 @@ public class SearchSpace
 
     public (IEnumerable<IPropagator>, Store) Propagate()
     {
-        // Console.WriteLine($"Propagating search space at depth {_depth}");
-
-        // COCP T14 page 31
         while (_active.Count > 0)
         {
             var propagator = _active.Dequeue();
@@ -111,6 +106,7 @@ public class SearchSpace
                 _store.UpdatePriority(variable);
             }
         }
+
         // No more active propagators
         return (_atFixpoint, _store);
     }

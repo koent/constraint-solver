@@ -5,30 +5,26 @@ namespace ConstraintSolver.Core.Solving.Propagators;
 
 public class Constant(int variableIndex, int constant) : IPropagator
 {
-    private int _variableIndex = variableIndex;
-
-    private int _constant = constant;
-
     public (Status, IEnumerable<int>) Invoke(Store store)
     {
-        var variable = store.Variables[_variableIndex];
+        var variable = store.Variables[variableIndex];
 
         if (variable.TryGetFixedValue(out var value))
         {
-            return (value == _constant ? Status.Subsumed : Status.Failed, []);
+            return (value == constant ? Status.Subsumed : Status.Failed, []);
         }
 
-        if (!variable.Domain().Contains(_constant))
+        if (!variable.Domain().Contains(constant))
         {
             return (Status.Failed, []);
         }
 
-        variable.Update([_constant]);
-        return (Status.Subsumed, [_variableIndex]);
+        variable.Update([constant]);
+        return (Status.Subsumed, [variableIndex]);
     }
 
     public IEnumerable<int> VariableIndices()
     {
-        yield return _variableIndex;
+        yield return variableIndex;
     }
 }

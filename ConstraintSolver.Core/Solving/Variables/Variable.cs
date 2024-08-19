@@ -6,7 +6,7 @@ namespace ConstraintSolver.Core.Solving.Variables;
 
 public class Variable
 {
-    private ModelVariable _modelVariable;
+    private readonly ModelVariable _modelVariable;
 
     public Variable(Variable variable)
     {
