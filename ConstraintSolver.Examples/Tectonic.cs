@@ -61,7 +61,7 @@ public class Tectonic : Model
             {
                 if (boxSize == maxBoxSize) continue;
 
-                if (boxSize == 1)
+                if (boxSize == 1 && clues[row, col] == 0)
                 {
                     AddConstraint(new Constant(_variables[row, col], 1));
                 }
