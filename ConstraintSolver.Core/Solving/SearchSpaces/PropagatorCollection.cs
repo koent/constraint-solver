@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using ConstraintSolver.Core.Modeling;
 using ConstraintSolver.Core.Solving.Propagators;
 
 namespace ConstraintSolver.Core.Solving.SearchSpaces;
@@ -10,14 +11,14 @@ public class PropagatorCollection
 
     private readonly LinkedList<IPropagator> _atFixpoint = [];
 
-    public PropagatorCollection(IEnumerable<IPropagator> activePropagators)
+    public PropagatorCollection(Model model)
     {
-        _active = new Queue<IPropagator>(activePropagators);
+        _active = new Queue<IPropagator>(model.GetPropagators());
     }
 
-    public PropagatorCollection(IEnumerable<IPropagator> atFixpointPropagators, int branchVariableIndex)
+    public PropagatorCollection(PropagatorCollection parent, int branchVariableIndex)
     {
-        _atFixpoint = new LinkedList<IPropagator>(atFixpointPropagators);
+        _atFixpoint = new LinkedList<IPropagator>(parent._atFixpoint);
         UpdateForModifiedVariableIndices([branchVariableIndex]);
     }
 

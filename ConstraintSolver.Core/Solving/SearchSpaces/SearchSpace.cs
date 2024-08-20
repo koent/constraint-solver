@@ -17,7 +17,7 @@ public class SearchSpace
     {
         _depth = 0;
         _store = new Store(model);
-        _propagators = new PropagatorCollection(model.GetPropagators());
+        _propagators = new PropagatorCollection(model);
     }
 
     public SearchSpace(SearchSpace parent, int branchIndex)
@@ -26,7 +26,7 @@ public class SearchSpace
         _store = new Store(parent._store);
 
         var branchVariableIndex = _store.Branch(branchIndex);
-        _propagators = new PropagatorCollection(parent._propagators.AtFixpoint, branchVariableIndex);
+        _propagators = new PropagatorCollection(parent._propagators, branchVariableIndex);
     }
 
     public bool PropagationFailed { get; private set; } = false;
