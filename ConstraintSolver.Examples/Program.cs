@@ -8,21 +8,23 @@ public static class Program
 {
     private const int _ = 0;
 
+    private const int _maxNofSolutions = 1;
+
     public static void Main()
     {
-        // var model = new Tectonic(Tectonic.Large20240522);
+        var model = new Tectonic(Tectonic.Large20240717);
 
-        var model = new Sudoku(Sudoku.Puzzle3x3Unreasonable);
+        // var model = new Sudoku(Sudoku.Puzzle4x4Basic);
 
         model.PrintStatistics();
 
         var solver = new Solver(model);
 
         var nofSolutions = 0;
-        foreach (var solution in solver.Solve())
+        foreach (var solution in solver.Solve().Take(_maxNofSolutions))
         {
             Console.WriteLine();
-            Console.WriteLine($"Solution {nofSolutions++}:");
+            Console.WriteLine($"# Solution {nofSolutions++}:\n");
             model.PrintSolution(solution);
             solution.PrintStatistics();
         }
