@@ -10,11 +10,7 @@ public class SearchSpace
 {
     private readonly Store _store;
 
-    private readonly Queue<IPropagator> _active = [];
-
-    private readonly LinkedList<IPropagator> _atFixpoint = [];
-
-    private readonly List<IPropagator> _subsumed = [];
+    private readonly PropagatorCollection _propagators;
 
     private readonly int _depth;
     public int Depth => _depth;
@@ -23,58 +19,54 @@ public class SearchSpace
     {
         _depth = 0;
         _store = new Store(model);
-        _active = new Queue<IPropagator>(model.GetPropagators());
+        _propagators = new PropagatorCollection(model.GetPropagators());
     }
 
     public SearchSpace(Store store, int branchIndex, IEnumerable<IPropagator> propagators, int depth)
     {
         _depth = depth;
         _store = new Store(store);
+        _propagators = new PropagatorCollection([]);
 
         var branchVariableIndex = _store.Branch(branchIndex);
         foreach (var propagator in propagators)
         {
             if (propagator.VariableIndices().Contains(branchVariableIndex))
             {
-                _active.Enqueue(propagator);
+                _propagators.EnqueueActive(propagator);
             }
             else
             {
-                _atFixpoint.AddLast(propagator);
+                _propagators.AddLastAtFixpoint(propagator);
             }
         }
     }
 
     public (IEnumerable<IPropagator>, Store) Propagate()
     {
-        while (_active.Count > 0)
+        while (_propagators.HasActivePropagators)
         {
-            var propagator = _active.Dequeue();
+            var propagator = _propagators.DequeueActive();
             var (propagationStatus, modifiedVariablesIndices) = propagator.Invoke(_store);
             if (propagationStatus == Status.Failed)
             {
-                return (_atFixpoint, null);
+                return (null, null);
             }
-            if (propagationStatus == Status.Subsumed)
-            {
-                _subsumed.Add(propagator);
-            }
-
-            var node = _atFixpoint.First;
+            var node = _propagators.FirstAtFixpoint;
             while (node != null)
             {
                 var next = node.Next;
                 if (node.Value.VariableIndices().Intersect(modifiedVariablesIndices).Any())
                 {
-                    _active.Enqueue(node.Value);
-                    _atFixpoint.Remove(node);
+                    _propagators.EnqueueActive(node.Value);
+                    _propagators.RemoveAtFixpoint(node);
                 }
                 node = next;
             }
 
             if (propagationStatus == Status.AtFixpoint)
             {
-                _atFixpoint.AddLast(propagator);
+                _propagators.AddLastAtFixpoint(propagator);
             }
 
             foreach (var variableIndex in modifiedVariablesIndices)
@@ -84,7 +76,6 @@ public class SearchSpace
         }
 
         // No more active propagators
-        return (_atFixpoint, _store);
+        return (_propagators.AtFixpoint, _store);
     }
-
 }
