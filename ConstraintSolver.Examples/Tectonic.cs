@@ -17,6 +17,8 @@ public class Tectonic : Model
 
     private int _height;
 
+    private int _maxBoxSize;
+
     public Tectonic(InputData inputData) : this(inputData.Width, inputData.Height, inputData.MaxBoxSize, inputData.Clues, inputData.Boxes) { }
 
     public Tectonic(int width, int height, int maxBoxSize, int[,] clues, List<List<(int R, int C)>> boxes)
@@ -28,6 +30,7 @@ public class Tectonic : Model
 
         _width = width;
         _height = height;
+        _maxBoxSize = maxBoxSize;
 
         // create variables
         _variables = new IVariable[height, width];
@@ -122,6 +125,14 @@ public class Tectonic : Model
         }
     }
 
+    public new void PrintStatistics()
+    {
+        Console.WriteLine($"Width: {_width}");
+        Console.WriteLine($"Height: {_height}");
+        Console.WriteLine($"Max box size: {_maxBoxSize}\n");
+
+        base.PrintStatistics();
+    }
 
     public void PrintSolution(Solution solution)
     {
@@ -135,6 +146,8 @@ public class Tectonic : Model
 
             Console.WriteLine();
         }
+
+        Console.WriteLine();
     }
 
     private static IEnumerable<(IVariable, IVariable)> AllDifferentPairs(List<IVariable> variables)
@@ -156,6 +169,8 @@ public class Tectonic : Model
         public int[,] Clues;
         public List<List<(int R, int C)>> Boxes;
     }
+
+    // Puzzle source: https://puzzlemadness.co.uk/archive/suguru
 
     private const int _ = 0;
 
