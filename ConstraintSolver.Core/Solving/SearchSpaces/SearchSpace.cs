@@ -45,7 +45,7 @@ public class SearchSpace
 
             if (propagationStatus == Status.AtFixpoint)
             {
-                _propagators.AddLastAtFixpoint(propagator);
+                _propagators.AddAtFixpoint(propagator);
             }
 
             foreach (var variableIndex in modifiedVariablesIndices)
