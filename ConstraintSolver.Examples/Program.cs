@@ -18,13 +18,11 @@ public static class Program
 
         var solver = new Solver(model);
 
-        var solutions = solver.Solve().ToList();
-
-        Console.WriteLine($"{solutions.Count} solution(s)");
-
-        foreach (var solution in solutions)
+        var nofSolutions = 0;
+        foreach (var solution in solver.Solve())
         {
             Console.WriteLine();
+            Console.WriteLine($"Solution {nofSolutions++}:");
             model.PrintSolution(solution);
             solution.PrintStatistics();
         }
