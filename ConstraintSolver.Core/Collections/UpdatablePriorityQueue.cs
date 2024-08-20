@@ -13,7 +13,7 @@ public class UpdatablePriorityQueue<T>
     private readonly Dictionary<T, int> _index;
 
     private HeapEntry[] _heap;
-    
+
     private int _count = 0;
 
     public UpdatablePriorityQueue()
@@ -31,11 +31,11 @@ public class UpdatablePriorityQueue<T>
 
     public int Count => _count;
 
-    public UpdatablePriorityQueue<T> Copy(IDictionary<T, T> elementCopyMap)
+    public UpdatablePriorityQueue<T> Copy()
     {
         return new UpdatablePriorityQueue<T>(
-            _heap.Select(e =>  new HeapEntry {Element = e.Element == null ? default : elementCopyMap[e.Element], Priority = e.Priority}).ToArray(),
-            _index.Keys.ToDictionary(e => elementCopyMap[e], e => _index[e]),
+            _heap.Select(e => new HeapEntry { Element = e.Element, Priority = e.Priority }).ToArray(),
+            _index.ToDictionary(),
             _count
         );
     }

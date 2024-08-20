@@ -11,26 +11,27 @@ public class Store
 {
     private readonly List<Variable> _variables = [];
 
-    private readonly UpdatablePriorityQueue<Variable> _branchVariables;
+    private readonly UpdatablePriorityQueue<int> _branchVariablesIndices;
 
     public Store(Model model)
     {
         _variables = model.Variables.Select(v => new Variable(v)).ToList();
-        _branchVariables = new UpdatablePriorityQueue<Variable>();
-        foreach (var variable in _variables)
+        _branchVariablesIndices = new UpdatablePriorityQueue<int>();
+
+        for (int i = 0; i < _variables.Count; i++)
         {
+            var variable = _variables[i];
             if (!variable.IsFixed)
             {
-                _branchVariables.Enqueue(variable, variable.BranchPriority());
+                _branchVariablesIndices.Enqueue(i, variable.BranchPriority());
             }
         }
     }
 
     public Store(Store store)
     {
-        var variableCopyMap = store._variables.ToDictionary(v => v, v => new Variable(v));
-        _variables = variableCopyMap.Values.ToList();
-        _branchVariables = store._branchVariables.Copy(variableCopyMap);
+        _variables = store._variables.Select(v => new Variable(v)).ToList();
+        _branchVariablesIndices = store._branchVariablesIndices.Copy();
     }
 
     public bool IsSolved => _variables.All(v => v.IsFixed);
@@ -39,32 +40,33 @@ public class Store
 
     public Variable GetBranchVariable()
     {
-        if (!_branchVariables.TryPeak(out var variable))
+        if (!_branchVariablesIndices.TryPeak(out var variableIndex))
         {
             throw new InvalidOperationException("No open variables");
         }
-        return variable;
+        return _variables[variableIndex];
     }
 
-    public Variable Branch(int branchIndex)
+    public int Branch(int branchIndex)
     {
-        var branchVariable = _branchVariables.Dequeue();
-        branchVariable.Branch(branchIndex);
-        return branchVariable;
+        var branchVariableIndex = _branchVariablesIndices.Dequeue();
+        _variables[branchVariableIndex].Branch(branchIndex);
+        return branchVariableIndex;
     }
 
-    public void UpdatePriority(Variable variable)
+    public void UpdatePriority(int variableIndex)
     {
+        var variable = _variables[variableIndex];
         if (variable.IsFixed)
         {
-            if (!_branchVariables.TryRemove(variable))
+            if (!_branchVariablesIndices.TryRemove(variableIndex))
             {
                 throw new InvalidOperationException("Variable is not enqueued");
             }
         }
         else
         {
-            if (!_branchVariables.TryUpdate(variable, variable.BranchPriority()))
+            if (!_branchVariablesIndices.TryUpdate(variableIndex, variable.BranchPriority()))
             {
                 throw new InvalidOperationException("Variable is not enqueued");
             }

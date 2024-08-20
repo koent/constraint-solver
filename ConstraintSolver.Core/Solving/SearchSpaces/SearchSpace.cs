@@ -53,8 +53,7 @@ public class SearchSpace
         _depth = depth;
         _store = new Store(store);
 
-        var branchVariable = _store.Branch(branchIndex);
-        var branchVariableIndex = _store.Variables.IndexOf(branchVariable);
+        var branchVariableIndex = _store.Branch(branchIndex);
         foreach (var propagator in propagators)
         {
             if (propagator.VariableIndices().Contains(branchVariableIndex))
@@ -102,8 +101,7 @@ public class SearchSpace
 
             foreach (var variableIndex in modifiedVariablesIndices)
             {
-                var variable = _store.Variables[variableIndex];
-                _store.UpdatePriority(variable);
+                _store.UpdatePriority(variableIndex);
             }
         }
 
