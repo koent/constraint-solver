@@ -24,12 +24,9 @@ public class Model
         }
 
         _constraints.Add(constraint);
-        _variableIndicesPerConstraint.Add(constraint.Variables().Select(v => _variables.IndexOf(v)));
-
         return constraint;
     }
 
-    private readonly List<IEnumerable<int>> _variableIndicesPerConstraint = [];
 
     private readonly List<IVariable> _variables = [];
     public List<IVariable> Variables => _variables;
