@@ -16,14 +16,14 @@ public static class Program
 
         var solver = new Solver(model);
 
-        var solution = solver.Solve().FirstOrDefault();
-        
-        if (solution == null)
-        {
-            Console.WriteLine("No solution");
-            return;
-        }
+        var solutions = solver.Solve().ToList();
 
-        model.PrintSolution(solution);
+        Console.WriteLine($"{solutions.Count} solution(s)");
+
+        foreach (var solution in solutions)
+        {
+            Console.WriteLine();
+            model.PrintSolution(solution);
+        }
     }
 }
