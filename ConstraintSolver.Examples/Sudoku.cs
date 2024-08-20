@@ -11,6 +11,8 @@ namespace ConstraintSolver.Examples;
 
 public class Sudoku : Model
 {
+    private const string SYMBOLS = " 123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
     private IVariable[,] _variables;
 
     private int _size;
@@ -92,14 +94,20 @@ public class Sudoku : Model
         }
     }
 
+    public new void PrintStatistics()
+    {
+        Console.WriteLine($"Size: {_size * _size}x{_size * _size}\n");
+
+        base.PrintStatistics();
+    }
+
     public void PrintSolution(Solution solution)
     {
-
         for (var row = 0; row < _size * _size; row++)
         {
             for (var col = 0; col < _size * _size; col++)
             {
-                Console.Write(solution[_variables[row, col]]);
+                Console.Write(SYMBOLS[solution[_variables[row, col]]]);
             }
 
             Console.WriteLine();
