@@ -4,7 +4,7 @@ using System.Linq;
 using ConstraintSolver.Core.Modeling;
 using ConstraintSolver.Core.Solving.Propagators;
 
-namespace ConstraintSolver.Core.Solving;
+namespace ConstraintSolver.Core.Solving.SearchSpaces;
 
 public class SearchSpace
 {

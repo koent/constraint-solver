@@ -5,7 +5,7 @@ using ConstraintSolver.Core.Collections;
 using ConstraintSolver.Core.Modeling;
 using ConstraintSolver.Core.Solving.Variables;
 
-namespace ConstraintSolver.Core.Solving;
+namespace ConstraintSolver.Core.Solving.SearchSpaces;
 
 public class Store
 {

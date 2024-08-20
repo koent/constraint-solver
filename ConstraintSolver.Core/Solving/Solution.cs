@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ConstraintSolver.Core.Modeling.Variables;
+using ConstraintSolver.Core.Solving.SearchSpaces;
 
 namespace ConstraintSolver.Core.Solving;
 

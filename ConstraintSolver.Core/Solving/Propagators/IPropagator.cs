@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ConstraintSolver.Core.Solving.SearchSpaces;
 
 namespace ConstraintSolver.Core.Solving.Propagators;
 
