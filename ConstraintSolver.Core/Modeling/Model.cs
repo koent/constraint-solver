@@ -41,4 +41,10 @@ public class Model
     {
         return constraint.Variables().Select(v => _variables.IndexOf(v));
     }
+
+    public void PrintStatistics()
+    {
+        Console.WriteLine($"Number of variables: {_variables.Count}");
+        Console.WriteLine($"Number of constraints: {_constraints.Count}");
+    }
 }

@@ -12,7 +12,9 @@ public class Solution : IReadOnlyDictionary<IVariable, int>
 {
     private readonly IReadOnlyDictionary<IVariable, int> _values;
 
-    public Solution(Store store)
+    private readonly Statistics _statistics;
+
+    public Solution(Store store, Statistics statistics)
     {
         if (!store.IsSolved)
         {
@@ -20,6 +22,7 @@ public class Solution : IReadOnlyDictionary<IVariable, int>
         }
 
         _values = store.Variables.ToDictionary(v => v.GetModelVariable(), v => v.Domain().Single());
+        _statistics = statistics;
     }
 
     public int this[IVariable key] => _values[key];
@@ -37,4 +40,12 @@ public class Solution : IReadOnlyDictionary<IVariable, int>
     public bool TryGetValue(IVariable key, [MaybeNullWhen(false)] out int value) => _values.TryGetValue(key, out value);
 
     IEnumerator IEnumerable.GetEnumerator() => _values.GetEnumerator();
+
+    public void PrintStatistics()
+    {
+        Console.WriteLine($"Search duration: {_statistics.Duration}");
+        Console.WriteLine($"Depth (max): {_statistics.Depth} ({_statistics.MaxDepth})");
+        Console.WriteLine($"Number of explored search spaces: {_statistics.NofExploredSearchSpaces}");
+        Console.WriteLine($"Number of failed propagations: {_statistics.NofFailedPropagations}");
+    }
 }

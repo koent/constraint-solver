@@ -14,6 +14,8 @@ public static class Program
 
         var model = new Sudoku(Sudoku.Puzzle3x3Unreasonable);
 
+        model.PrintStatistics();
+
         var solver = new Solver(model);
 
         var solutions = solver.Solve().ToList();
@@ -24,6 +26,7 @@ public static class Program
         {
             Console.WriteLine();
             model.PrintSolution(solution);
+            solution.PrintStatistics();
         }
     }
 }
