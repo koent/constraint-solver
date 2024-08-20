@@ -26,20 +26,9 @@ public class SearchSpace
     {
         _depth = depth;
         _store = new Store(store);
-        _propagators = new PropagatorCollection([]);
 
         var branchVariableIndex = _store.Branch(branchIndex);
-        foreach (var propagator in propagators)
-        {
-            if (propagator.VariableIndices().Contains(branchVariableIndex))
-            {
-                _propagators.EnqueueActive(propagator);
-            }
-            else
-            {
-                _propagators.AddLastAtFixpoint(propagator);
-            }
-        }
+        _propagators = new PropagatorCollection(propagators, branchVariableIndex);
     }
 
     public (IEnumerable<IPropagator>, Store) Propagate()
@@ -52,17 +41,8 @@ public class SearchSpace
             {
                 return (null, null);
             }
-            var node = _propagators.FirstAtFixpoint;
-            while (node != null)
-            {
-                var next = node.Next;
-                if (node.Value.VariableIndices().Intersect(modifiedVariablesIndices).Any())
-                {
-                    _propagators.EnqueueActive(node.Value);
-                    _propagators.RemoveAtFixpoint(node);
-                }
-                node = next;
-            }
+
+            _propagators.UpdateForModifiedVariableIndices(modifiedVariablesIndices);
 
             if (propagationStatus == Status.AtFixpoint)
             {

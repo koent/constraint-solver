@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConstraintSolver.Core.Solving.Propagators;
 
@@ -8,9 +9,15 @@ public class PropagatorCollection
 
     private readonly LinkedList<IPropagator> _atFixpoint = [];
 
-    public PropagatorCollection(IEnumerable<IPropagator> propagators)
+    public PropagatorCollection(IEnumerable<IPropagator> activePropagators)
     {
-        _active = new Queue<IPropagator>(propagators);
+        _active = new Queue<IPropagator>(activePropagators);
+    }
+
+    public PropagatorCollection(IEnumerable<IPropagator> atFixpointPropagators, int branchVariableIndex)
+    {
+        _atFixpoint = new LinkedList<IPropagator>(atFixpointPropagators);
+        UpdateForModifiedVariableIndices([branchVariableIndex]);
     }
 
     public IEnumerable<IPropagator> AtFixpoint => _atFixpoint;
@@ -22,20 +29,23 @@ public class PropagatorCollection
         return _active.Dequeue();
     }
 
-    public void EnqueueActive(IPropagator propagator)
-    {
-        _active.Enqueue(propagator);
-    }
-
     public void AddLastAtFixpoint(IPropagator propagator)
     {
         _atFixpoint.AddLast(propagator);
     }
 
-    public void RemoveAtFixpoint(LinkedListNode<IPropagator> node)
+    public void UpdateForModifiedVariableIndices(IEnumerable<int> modifiedVariablesIndices)
     {
-        _atFixpoint.Remove(node);
+        var node = _atFixpoint.First;
+        while (node != null)
+        {
+            var next = node.Next;
+            if (node.Value.VariableIndices().Intersect(modifiedVariablesIndices).Any())
+            {
+                _active.Enqueue(node.Value);
+                _atFixpoint.Remove(node);
+            }
+            node = next;
+        }
     }
-
-    public LinkedListNode<IPropagator> FirstAtFixpoint => _atFixpoint.First;
 }
