@@ -41,9 +41,10 @@ public class Solver
                 continue;
             }
 
-            foreach (var branchIndex in store.GetBranchVariable().BranchIndices().Reverse())
+            var branchVariableIndex = store.GetBranchVariableIndex();
+            foreach (var branchIndex in store.Variables[branchVariableIndex].BranchIndices().Reverse())
             {
-                _searchSpaces.Push(new SearchSpace(searchSpace, branchIndex));
+                _searchSpaces.Push(new SearchSpace(searchSpace, branchVariableIndex, branchIndex));
             }
         }
         _statistics.StopTracking();

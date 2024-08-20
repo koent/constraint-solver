@@ -20,12 +20,10 @@ public class SearchSpace
         _propagators = new PropagatorCollection(model);
     }
 
-    public SearchSpace(SearchSpace parent, int branchIndex)
+    public SearchSpace(SearchSpace parent, int branchVariableIndex, int branchIndex)
     {
         _depth = parent._depth + 1;
-        _store = new Store(parent._store);
-
-        var branchVariableIndex = _store.Branch(branchIndex);
+        _store = new Store(parent._store, branchVariableIndex, branchIndex);
         _propagators = new PropagatorCollection(parent._propagators, branchVariableIndex);
     }
 

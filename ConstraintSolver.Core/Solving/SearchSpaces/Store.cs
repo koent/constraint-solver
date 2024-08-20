@@ -28,30 +28,36 @@ public class Store
         }
     }
 
-    public Store(Store store)
+    public Store(Store parent, int branchVariableIndex, int branchIndex)
     {
-        _variables = store._variables.Select(v => new Variable(v)).ToList();
-        _branchVariablesIndices = store._branchVariablesIndices.Copy();
+        _variables = parent._variables.Select(v => new Variable(v)).ToList();
+        _branchVariablesIndices = parent._branchVariablesIndices.Copy();
+
+        Branch(branchVariableIndex, branchIndex);
     }
 
     public bool IsSolved => _variables.All(v => v.IsFixed);
 
     public List<Variable> Variables => _variables;
 
-    public Variable GetBranchVariable()
+    public int GetBranchVariableIndex()
     {
         if (!_branchVariablesIndices.TryPeak(out var variableIndex))
         {
             throw new InvalidOperationException("No open variables");
         }
-        return _variables[variableIndex];
+
+        return variableIndex;
     }
 
-    public int Branch(int branchIndex)
+    public void Branch(int branchVariableIndex, int branchIndex)
     {
-        var branchVariableIndex = _branchVariablesIndices.Dequeue();
+        if (!_branchVariablesIndices.TryRemove(branchVariableIndex))
+        {
+            throw new InvalidOperationException("Cannot branch on this variable");
+        }
+
         _variables[branchVariableIndex].Branch(branchIndex);
-        return branchVariableIndex;
     }
 
     public void UpdatePriority(int variableIndex)
