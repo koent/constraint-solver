@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ConstraintSolver.Core.Modeling.Constraints;
 using ConstraintSolver.Core.Modeling.Variables;
+using ConstraintSolver.Core.Solving.Propagators;
 
 namespace ConstraintSolver.Core.Modeling;
 
@@ -27,16 +28,14 @@ public class Model
         return constraint;
     }
 
-
     private readonly List<IVariable> _variables = [];
     public List<IVariable> Variables => _variables;
 
     private readonly List<IConstraint> _constraints = [];
-    public List<IConstraint> Constraints => _constraints;
 
-    public IEnumerable<int> VariableIndices(IConstraint constraint)
+    public IEnumerable<IPropagator> GetPropagators()
     {
-        return constraint.Variables().Select(v => _variables.IndexOf(v));
+        return _constraints.SelectMany(c => c.GetPropagators(_variables));
     }
 
     public void PrintStatistics()

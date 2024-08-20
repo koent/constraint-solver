@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using ConstraintSolver.Core.Modeling.Variables;
+using ConstraintSolver.Core.Solving.Propagators;
+using UnequalPropagator = ConstraintSolver.Core.Solving.Propagators.Unequal;
 
 namespace ConstraintSolver.Core.Modeling.Constraints;
 
@@ -14,4 +16,9 @@ public class Unequal(IVariable left, IVariable right) : IConstraint
     }
 
     public override string ToString() => _name;
+
+    public IEnumerable<IPropagator> GetPropagators(List<IVariable> variablesList)
+    {
+        yield return new UnequalPropagator(variablesList.IndexOf(left), variablesList.IndexOf(right));
+    }    
 }

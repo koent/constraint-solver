@@ -23,29 +23,7 @@ public class SearchSpace
     {
         _depth = 0;
         _store = new Store(model);
-
-        foreach (var constraint in model.Constraints)
-        {
-            var variableIndices = model.VariableIndices(constraint).ToList();
-            switch (constraint)
-            {
-                case Modeling.Constraints.Unequal:
-                    var leftIndex = variableIndices[0];
-                    var rightIndex = variableIndices[1];
-                    _active.Enqueue(new Unequal(leftIndex, rightIndex));
-                    break;
-                case Modeling.Constraints.Constant constantConstraint:
-                    var variableIndex = variableIndices[0];
-                    _active.Enqueue(new Constant(variableIndex, constantConstraint.ConstantValue));
-                    break;
-                case Modeling.Constraints.AtMost atMostConstraint:
-                    var variableIndex2 = variableIndices[0];
-                    _active.Enqueue(new AtMost(variableIndex2, atMostConstraint.LimitValue));
-                    break;
-                default:
-                    throw new InvalidOperationException($"No propagator for constraint {constraint.GetType().FullName}");
-            }
-        }
+        _active = new Queue<IPropagator>(model.GetPropagators());
     }
 
     public SearchSpace(Store store, int branchIndex, IEnumerable<IPropagator> propagators, int depth)
