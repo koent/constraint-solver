@@ -33,6 +33,10 @@ public class Statistics
         NofExploredSearchSpaces++;
         Depth = searchSpace.Depth;
         MaxDepth = Math.Max(MaxDepth, searchSpace.Depth);
+        if (searchSpace.PropagationFailed)
+        {
+            NofFailedPropagations++;
+        }
     }
 
     public void StopTracking()

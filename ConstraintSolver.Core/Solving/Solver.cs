@@ -24,14 +24,17 @@ public class Solver
         while (_searchSpaces.Count != 0)
         {
             var searchSpace = _searchSpaces.Pop();
+
+            searchSpace.Propagate();
+
             _statistics.Update(searchSpace);
-            var (propagators, store) = searchSpace.Propagate();
-            if (store == null)
+
+            if (searchSpace.PropagationFailed)
             {
-                _statistics.NofFailedPropagations++;
                 continue;
             }
 
+            var store = searchSpace.Store;
             if (store.IsSolved)
             {
                 yield return new Solution(store, _statistics.Collect());
@@ -40,7 +43,7 @@ public class Solver
 
             foreach (var branchIndex in store.GetBranchVariable().BranchIndices().Reverse())
             {
-                _searchSpaces.Push(new SearchSpace(store, branchIndex, propagators, searchSpace.Depth + 1));
+                _searchSpaces.Push(new SearchSpace(searchSpace, branchIndex));
             }
         }
         _statistics.StopTracking();

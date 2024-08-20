@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using ConstraintSolver.Core.Modeling;
 using ConstraintSolver.Core.Solving.Propagators;
 
@@ -9,6 +6,7 @@ namespace ConstraintSolver.Core.Solving.SearchSpaces;
 public class SearchSpace
 {
     private readonly Store _store;
+    public Store Store => _store;
 
     private readonly PropagatorCollection _propagators;
 
@@ -22,16 +20,18 @@ public class SearchSpace
         _propagators = new PropagatorCollection(model.GetPropagators());
     }
 
-    public SearchSpace(Store store, int branchIndex, IEnumerable<IPropagator> propagators, int depth)
+    public SearchSpace(SearchSpace parent, int branchIndex)
     {
-        _depth = depth;
-        _store = new Store(store);
+        _depth = parent._depth + 1;
+        _store = new Store(parent._store);
 
         var branchVariableIndex = _store.Branch(branchIndex);
-        _propagators = new PropagatorCollection(propagators, branchVariableIndex);
+        _propagators = new PropagatorCollection(parent._propagators.AtFixpoint, branchVariableIndex);
     }
 
-    public (IEnumerable<IPropagator>, Store) Propagate()
+    public bool PropagationFailed { get; private set; } = false;
+
+    public void Propagate()
     {
         while (_propagators.HasActivePropagators)
         {
@@ -39,7 +39,8 @@ public class SearchSpace
             var (propagationStatus, modifiedVariablesIndices) = propagator.Invoke(_store);
             if (propagationStatus == Status.Failed)
             {
-                return (null, null);
+                PropagationFailed = true;
+                return;
             }
 
             _propagators.UpdateForModifiedVariableIndices(modifiedVariablesIndices);
@@ -54,8 +55,5 @@ public class SearchSpace
                 _store.UpdatePriority(variableIndex);
             }
         }
-
-        // No more active propagators
-        return (_propagators.AtFixpoint, _store);
     }
 }
