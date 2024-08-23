@@ -24,23 +24,16 @@ public class Permutation(IEnumerable<int> variables) : IPropagator
         while (changed)
         {
             changed = false;
-            Dictionary<int, List<int>> valueToVariableIndex = [];
+            var valueToVariableIndices = values.ToDictionary(v => v, _ => new List<int>());
             foreach (var variableIndex in _variableIndices)
             {
                 foreach (var value in store.Variables[variableIndex].Domain())
                 {
-                    if (valueToVariableIndex.TryGetValue(value, out List<int> indices))
-                    {
-                        indices.Add(variableIndex);
-                    }
-                    else
-                    {
-                        valueToVariableIndex[value] = [variableIndex];
-                    }
+                    valueToVariableIndices[value].Add(variableIndex);
                 }
             }
 
-            foreach (var (value, variableIndices) in valueToVariableIndex)
+            foreach (var (value, variableIndices) in valueToVariableIndices)
             {
                 if (variableIndices.Count == 1)
                 {
