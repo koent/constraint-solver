@@ -13,7 +13,6 @@ public class Permutation(IEnumerable<int> variables) : IPropagator
         var variables = _variableIndices.Select(i => store.Variables[i]);
         if (variables.All(v => v.IsFixed)) return (Status.Subsumed, []);
 
-
         var values = variables.SelectMany(v => v.Domain()).ToHashSet();
         if (values.Count < _variableIndices.Count)
         {
@@ -55,7 +54,7 @@ public class Permutation(IEnumerable<int> variables) : IPropagator
             }
         }
 
-        return (Status.AtFixpoint, updatedVariableIndices);
+        return (variables.All(v => v.IsFixed) ? Status.Subsumed : Status.AtFixpoint, updatedVariableIndices);
     }
 
     public IEnumerable<int> VariableIndices() => _variableIndices;
