@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using ConstraintSolver.Core.Modeling;
@@ -57,13 +56,13 @@ public class Sudoku : Model
         // row constraints
         for (var row = 0; row < size * size; row++)
         {
-            AllDifferentPairs(Enumerable.Range(0, size * size).Select(c => _variables[row, c]).ToList());
+            AddConstraint(new Permutation(Enumerable.Range(0, size * size).Select(c => _variables[row, c])));
         }
 
         // column constraints
         for (var col = 0; col < size * size; col++)
         {
-            AllDifferentPairs(Enumerable.Range(0, size * size).Select(r => _variables[r, col]).ToList());
+            AddConstraint(new Permutation(Enumerable.Range(0, size * size).Select(r => _variables[r, col])));
         }
 
         // block constraints
@@ -71,7 +70,7 @@ public class Sudoku : Model
         {
             for (var bRow = 0; bRow < size; bRow++)
             {
-                AllDifferentPairs(Enumerable.Range(0, size * size).Select(i => _variables[bRow * size + (i / size), bCol * size + (i % size)]).ToList());
+                AddConstraint(new Permutation(Enumerable.Range(0, size * size).Select(i => _variables[bRow * size + (i / size), bCol * size + (i % size)])));
             }
         }
 
@@ -96,17 +95,6 @@ public class Sudoku : Model
             }
 
             Console.WriteLine();
-        }
-    }
-
-    private void AllDifferentPairs(List<IVariable> variables)
-    {
-        for (int i = 0; i < variables.Count - 1; i++)
-        {
-            for (int j = i + 1; j < variables.Count; j++)
-            {
-                AddConstraint(new Unequal(variables[i], variables[j]));
-            }
         }
     }
 

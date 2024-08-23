@@ -75,7 +75,7 @@ public class Tectonic : Model
             }
         }
 
-        // row constrains
+        // row constraints
         for (var row = 0; row < height; row++)
         {
             for (var col = 0; col < width - 1; col++)
@@ -113,7 +113,7 @@ public class Tectonic : Model
         // boxes constraints
         foreach (var box in boxes)
         {
-            AllDifferentPairs(box.Select(pair => _variables[pair.R, pair.C]).ToList());
+            AddConstraint(new Permutation(box.Select(pair => _variables[pair.R, pair.C])));
         }
 
         // Calculate propagators from constraints
@@ -143,17 +143,6 @@ public class Tectonic : Model
         }
 
         Console.WriteLine();
-    }
-
-    private void AllDifferentPairs(List<IVariable> variables)
-    {
-        for (int i = 0; i < variables.Count - 1; i++)
-        {
-            for (int j = i + 1; j < variables.Count; j++)
-            {
-                AddConstraint(new Unequal(variables[i], variables[j]));
-            }
-        }
     }
 
     public struct InputData
