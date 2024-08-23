@@ -50,7 +50,7 @@ public class Model
     {
         Console.WriteLine($"Number of variables: {_variables.Count}");
         Console.WriteLine($"Number of constraints: {_constraints.Count}");
-        Console.WriteLine($"Number op propagators: {_propagators.Count}");
+        Console.WriteLine($"Number of propagators: {_propagators.Count}");
     }
 
     private class PropagatorComparer : IEqualityComparer<IPropagator>
