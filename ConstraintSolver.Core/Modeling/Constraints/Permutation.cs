@@ -23,7 +23,10 @@ public class Permutation(IEnumerable<IVariable> variables) : IConstraint
             }
         }
 
-        yield return new PermutationPropagator(variableIndices);
+        if (variableIndices.Count > 2)
+        {
+            yield return new PermutationPropagator(variableIndices);
+        }
     }
 
     public IEnumerable<IVariable> Variables() => _variables;
