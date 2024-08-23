@@ -54,44 +54,29 @@ public class Sudoku : Model
             }
         }
 
-        // row constraint pairs
-        var unequalPairs = new HashSet<(IVariable, IVariable)>();
-
+        // row constraints
         for (var row = 0; row < size * size; row++)
         {
-            unequalPairs.UnionWith(AllDifferentPairs(Enumerable.Range(0, size * size).Select(c => _variables[row, c]).ToList()));
+            AllDifferentPairs(Enumerable.Range(0, size * size).Select(c => _variables[row, c]).ToList());
         }
 
-        // column constraint pairs
+        // column constraints
         for (var col = 0; col < size * size; col++)
         {
-            unequalPairs.UnionWith(AllDifferentPairs(Enumerable.Range(0, size * size).Select(r => _variables[r, col]).ToList()));
+            AllDifferentPairs(Enumerable.Range(0, size * size).Select(r => _variables[r, col]).ToList());
         }
 
-        // block constraint pairs
+        // block constraints
         for (var bCol = 0; bCol < size; bCol++)
         {
             for (var bRow = 0; bRow < size; bRow++)
             {
-                for (int i = 0; i < size * size - 1; i++)
-                {
-                    var col1 = bCol * size + (i % size);
-                    var row1 = bRow * size + (i / size);
-                    for (int j = i + 1; j < size * size; j++)
-                    {
-                        var col2 = bCol * size + (j % size);
-                        var row2 = bRow * size + (j / size);
-                        unequalPairs.Add((_variables[row1, col1], _variables[row2, col2]));
-                    }
-                }
+                AllDifferentPairs(Enumerable.Range(0, size * size).Select(i => _variables[bRow * size + (i / size), bCol * size + (i % size)]).ToList());
             }
         }
 
-        // add constraints from pairs
-        foreach (var (left, right) in unequalPairs)
-        {
-            AddConstraint(new Unequal(left, right));
-        }
+        // Calculate propagators from constraints
+        CalculatePropagators();
     }
 
     public new void PrintStatistics()
@@ -114,13 +99,13 @@ public class Sudoku : Model
         }
     }
 
-    private static IEnumerable<(IVariable, IVariable)> AllDifferentPairs(List<IVariable> variables)
+    private void AllDifferentPairs(List<IVariable> variables)
     {
         for (int i = 0; i < variables.Count - 1; i++)
         {
             for (int j = i + 1; j < variables.Count; j++)
             {
-                yield return (variables[i], variables[j]);
+                AddConstraint(new Unequal(variables[i], variables[j]));
             }
         }
     }

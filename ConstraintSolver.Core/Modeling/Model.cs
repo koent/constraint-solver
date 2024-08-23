@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ConstraintSolver.Core.Modeling.Constraints;
 using ConstraintSolver.Core.Modeling.Variables;
@@ -33,14 +34,42 @@ public class Model
 
     private readonly List<IConstraint> _constraints = [];
 
-    public IEnumerable<IPropagator> GetPropagators()
+    private List<IPropagator> _propagators;
+
+    public void CalculatePropagators()
     {
-        return _constraints.SelectMany(c => c.GetPropagators(_variables));
+        _propagators = _constraints
+            .SelectMany(c => c.GetPropagators(_variables))
+            .ToHashSet(new PropagatorComparer())
+            .ToList();
     }
+
+    public IEnumerable<IPropagator> GetPropagators() => _propagators;
 
     public void PrintStatistics()
     {
         Console.WriteLine($"Number of variables: {_variables.Count}");
         Console.WriteLine($"Number of constraints: {_constraints.Count}");
+        Console.WriteLine($"Number op propagators: {_propagators.Count}");
+    }
+
+    private class PropagatorComparer : IEqualityComparer<IPropagator>
+    {
+        public bool Equals(IPropagator left, IPropagator right)
+        {
+            if (left.GetType() != right.GetType()) return false;
+
+            var leftVariableIndices = left.VariableIndices().ToList();
+            var rightVariableIndices = right.VariableIndices().ToList();
+
+            if (leftVariableIndices.Count != rightVariableIndices.Count) return false;
+
+            return Enumerable.Zip(leftVariableIndices, rightVariableIndices).All(pair => pair.First == pair.Second);
+        }
+
+        public int GetHashCode([DisallowNull] IPropagator obj)
+        {
+            return obj.VariableIndices().Aggregate(0, (h, v) => ((h << 5) + h) ^ v);
+        }
     }
 }

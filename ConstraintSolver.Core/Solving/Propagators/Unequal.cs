@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ConstraintSolver.Core.Solving.SearchSpaces;
@@ -6,10 +7,13 @@ namespace ConstraintSolver.Core.Solving.Propagators;
 
 public class Unequal(int leftIndex, int rightIndex) : IPropagator
 {
+    private readonly int _leftIndex = Math.Min(leftIndex, rightIndex);
+    private readonly int _rightIndex = Math.Max(leftIndex, rightIndex);
+
     public (Status, IEnumerable<int>) Invoke(Store store)
     {
-        var left = store.Variables[leftIndex];
-        var right = store.Variables[rightIndex];
+        var left = store.Variables[_leftIndex];
+        var right = store.Variables[_rightIndex];
 
         var updatedIndices = new List<int>();
 
@@ -23,7 +27,7 @@ public class Unequal(int leftIndex, int rightIndex) : IPropagator
             var rightUpdated = right.RemoveFromDomain(leftValue);
             if (rightUpdated)
             {
-                updatedIndices.Add(rightIndex);
+                updatedIndices.Add(_rightIndex);
             }
         }
         else if (right.TryGetFixedValue(out rightValue))
@@ -31,7 +35,7 @@ public class Unequal(int leftIndex, int rightIndex) : IPropagator
             var leftUpdated = left.RemoveFromDomain(rightValue);
             if (leftUpdated)
             {
-                updatedIndices.Add(leftIndex);
+                updatedIndices.Add(_leftIndex);
             }
         }
 
@@ -50,7 +54,7 @@ public class Unequal(int leftIndex, int rightIndex) : IPropagator
 
     public IEnumerable<int> VariableIndices()
     {
-        yield return leftIndex;
-        yield return rightIndex;
+        yield return _leftIndex;
+        yield return _rightIndex;
     }
 }

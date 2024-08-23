@@ -75,54 +75,49 @@ public class Tectonic : Model
             }
         }
 
-        // row constraint pairs
-        var unequalPairs = new HashSet<(IVariable, IVariable)>();
-
+        // row constrains
         for (var row = 0; row < height; row++)
         {
             for (var col = 0; col < width - 1; col++)
             {
-                unequalPairs.Add((_variables[row, col], _variables[row, col + 1]));
+                AddConstraint(new Unequal(_variables[row, col], _variables[row, col + 1]));
             }
         }
 
-        // column constraint pairs
+        // column constraints
         for (var col = 0; col < width; col++)
         {
             for (var row = 0; row < height - 1; row++)
             {
-                unequalPairs.Add((_variables[row, col], _variables[row + 1, col]));
+                AddConstraint(new Unequal(_variables[row, col], _variables[row + 1, col]));
             }
         }
 
-        // diagonal constraint pairs
+        // diagonal constraints
         for (var row = 0; row < height - 1; row++)
         {
             for (var col = 0; col < width; col++)
             {
                 if (col != 0)
                 {
-                    unequalPairs.Add((_variables[row, col], _variables[row + 1, col - 1]));
+                    AddConstraint(new Unequal(_variables[row, col], _variables[row + 1, col - 1]));
                 }
 
                 if (col != width - 1)
                 {
-                    unequalPairs.Add((_variables[row, col], _variables[row + 1, col + 1]));
+                    AddConstraint(new Unequal(_variables[row, col], _variables[row + 1, col + 1]));
                 }
             }
         }
 
-        // boxes constraint pairs
+        // boxes constraints
         foreach (var box in boxes)
         {
-            unequalPairs.UnionWith(AllDifferentPairs(box.Select(pair => _variables[pair.R, pair.C]).ToList()));
+            AllDifferentPairs(box.Select(pair => _variables[pair.R, pair.C]).ToList());
         }
 
-        // add constraints from pairs
-        foreach (var (left, right) in unequalPairs)
-        {
-            AddConstraint(new Unequal(left, right));
-        }
+        // Calculate propagators from constraints
+        CalculatePropagators();
     }
 
     public new void PrintStatistics()
@@ -150,13 +145,13 @@ public class Tectonic : Model
         Console.WriteLine();
     }
 
-    private static IEnumerable<(IVariable, IVariable)> AllDifferentPairs(List<IVariable> variables)
+    private void AllDifferentPairs(List<IVariable> variables)
     {
         for (int i = 0; i < variables.Count - 1; i++)
         {
             for (int j = i + 1; j < variables.Count; j++)
             {
-                yield return (variables[i], variables[j]);
+                AddConstraint(new Unequal(variables[i], variables[j]));
             }
         }
     }
