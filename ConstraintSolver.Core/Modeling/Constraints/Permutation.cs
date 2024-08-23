@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ConstraintSolver.Core.Modeling.Variables;
 using ConstraintSolver.Core.Solving.Propagators;
+using UnequalPropagator = ConstraintSolver.Core.Solving.Propagators.Unequal;
+using PermutationPropagator = ConstraintSolver.Core.Solving.Propagators.Permutation;
 
 namespace ConstraintSolver.Core.Modeling.Constraints;
 
@@ -17,9 +19,11 @@ public class Permutation(IEnumerable<IVariable> variables) : IConstraint
         {
             for (int j = i + 1; j < _variables.Count; j++)
             {
-                yield return new Solving.Propagators.Unequal(variableIndices[i], variableIndices[j]);
+                yield return new UnequalPropagator(variableIndices[i], variableIndices[j]);
             }
         }
+
+        yield return new PermutationPropagator(variableIndices);
     }
 
     public IEnumerable<IVariable> Variables() => _variables;
