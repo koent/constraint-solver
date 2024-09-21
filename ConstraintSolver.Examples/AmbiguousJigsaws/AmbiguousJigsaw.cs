@@ -187,7 +187,9 @@ public class AmbiguousJigsaw : Model
 
     public new void PrintStatistics()
     {
-        Console.WriteLine($"Size: {_width}x{_height}\n");
+        Console.WriteLine($"Size: {_width}x{_height}");
+        Console.WriteLine($"Number of edges: {2 * _width * _height - _width - _height}");
+        Console.WriteLine();
 
         base.PrintStatistics();
     }
@@ -203,6 +205,33 @@ public class AmbiguousJigsaw : Model
 
             Console.WriteLine();
         }
+
+        Console.WriteLine();
+
+        var nofDifferingEdges = 0;
+        for (var row = 0; row < _height; row++)
+        {
+            for (var col = 0; col < _width; col++)
+            {
+                var value = solution[_variables[row, col]];
+                var rightConnection = _board[value / 4, (6 - value % 4) % 4];
+                var bottomConnection = _board[value / 4, (5 - value % 4) % 4];
+
+                if (bottomConnection != _board[_width * row + col, 1])
+                {
+                    nofDifferingEdges++;
+                }
+
+                if (rightConnection != _board[_width * row + col, 2])
+                {
+                    nofDifferingEdges++;
+                }
+            }
+
+        }
+
+        Console.WriteLine($"Number of differing edges: {nofDifferingEdges}");
+        Console.WriteLine();
     }
 
     public struct InputData
