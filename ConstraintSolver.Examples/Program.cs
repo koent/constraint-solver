@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ConstraintSolver.Core.Solving;
+using ConstraintSolver.Examples.AmbiguousJigsaws;
 
 namespace ConstraintSolver.Examples;
 
@@ -8,13 +9,15 @@ public static class Program
 {
     private const int _ = 0;
 
-    private const int _maxNofSolutions = 1;
+    private const int _maxNofSolutions = 10;
 
     public static void Main()
     {
-        var model = new Tectonic(Tectonic.Large20240717);
+        // var model = new Tectonic(Tectonic.Large20240717);
 
-        // var model = new Sudoku(Sudoku.Puzzle4x4Basic);
+        // var model = new Sudoku(Sudoku.Puzzle7x7);
+
+        var model = new AmbiguousJigsaw(AmbiguousJigsaw.ParkerJigsaw);
 
         model.PrintStatistics();
 
