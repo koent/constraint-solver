@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ConstraintSolver.Core.Modeling;
 using ConstraintSolver.Core.Solving.SearchSpaces;
+using ConstraintSolver.Core.Solving.Statistics;
 
 namespace ConstraintSolver.Core.Solving;
 
@@ -10,24 +11,28 @@ public class Solver
 {
     private readonly Stack<SearchSpace> _searchSpaces = [];
 
-    private readonly Statistics _statistics;
+    private readonly StatisticsCollector _statisticsCollector = new StatisticsCollector();
 
-    public Solver(Model model)
+    private GlobalStatistics _globalStatistics;
+
+    private readonly int? _maxNofSolutions;
+
+    public Solver(Model model, int? maxNofSolutions = null)
     {
         _searchSpaces.Push(new SearchSpace(model));
-        _statistics = new Statistics();
+        _maxNofSolutions = maxNofSolutions;
     }
 
     public IEnumerable<Solution> Solve()
     {
-        _statistics.StartTracking();
-        while (_searchSpaces.Count != 0)
+        _statisticsCollector.StartTracking();
+        while (_searchSpaces.Count != 0 && (!_maxNofSolutions.HasValue || _statisticsCollector.NofSolutions < _maxNofSolutions.Value))
         {
             var searchSpace = _searchSpaces.Pop();
 
             searchSpace.Propagate();
 
-            _statistics.Update(searchSpace);
+            _statisticsCollector.Update(searchSpace);
 
             if (searchSpace.PropagationFailed)
             {
@@ -37,7 +42,7 @@ public class Solver
             var store = searchSpace.Store;
             if (store.IsSolved)
             {
-                yield return new Solution(store, _statistics.Collect());
+                yield return new Solution(store, _statisticsCollector.Collect());
                 continue;
             }
 
@@ -47,6 +52,22 @@ public class Solver
                 _searchSpaces.Push(new SearchSpace(searchSpace, branchVariableIndex, branchIndex));
             }
         }
-        _statistics.StopTracking();
+        _globalStatistics = _statisticsCollector.StopTracking();
+    }
+
+    public void PrintStatistics()
+    {
+        Console.WriteLine($"Total duration: {_globalStatistics.Duration}");
+
+        if (_maxNofSolutions.HasValue)
+        {
+            Console.WriteLine($"Number of found solutions (max): {_globalStatistics.NofFoundSolutions} ({_maxNofSolutions.Value})");
+        }
+        else
+        {
+            Console.WriteLine($"Total number of solutions: {_globalStatistics.NofFoundSolutions}");
+        }
+
+        Console.WriteLine($"Max depth: {_globalStatistics.MaxDepth}");
     }
 }

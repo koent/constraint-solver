@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using ConstraintSolver.Core.Solving;
 using ConstraintSolver.Examples.AmbiguousJigsaws;
 
@@ -20,16 +19,18 @@ public static class Program
         var model = new AmbiguousJigsaw(AmbiguousJigsaw.ParkerJigsaw);
 
         model.PrintStatistics();
+        Console.WriteLine();
 
-        var solver = new Solver(model);
+        var solver = new Solver(model, _maxNofSolutions);
 
-        var nofSolutions = 0;
-        foreach (var solution in solver.Solve().Take(_maxNofSolutions))
+        foreach (var solution in solver.Solve())
         {
-            Console.WriteLine();
-            Console.WriteLine($"# Solution {nofSolutions++}:\n");
+            Console.WriteLine($"# Solution {solution.Statistics.SolutionIndex}:\n");
             model.PrintSolution(solution);
             solution.PrintStatistics();
+            Console.WriteLine();
         }
+
+        solver.PrintStatistics();
     }
 }
