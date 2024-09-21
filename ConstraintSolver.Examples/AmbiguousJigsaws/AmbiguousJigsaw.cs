@@ -83,18 +83,20 @@ public class AmbiguousJigsaw : Model
             for (var row = 0; row < _height; row++)
             {
                 var index = _width * row + col;
-                _board[index, 0] = row == 0 ? 0 : horizontalEdges[row - 1, col] ^ 1;
-                _board[index, 1] = col == _width - 1 ? 0 : verticalEdges[row, col];
-                _board[index, 2] = row == _height - 1 ? 0 : horizontalEdges[row, col];
-                _board[index, 3] = col == 0 ? 0 : verticalEdges[row, col - 1] ^ 1;
+                _board[index, 0] = row == 0 ? -1 : horizontalEdges[row - 1, col] ^ 1;
+                _board[index, 1] = col == _width - 1 ? -1 : verticalEdges[row, col];
+                _board[index, 2] = row == _height - 1 ? -1 : horizontalEdges[row, col];
+                _board[index, 3] = col == 0 ? -1 : verticalEdges[row, col - 1] ^ 1;
             }
         }
+
+        JigsawConnection.SetBoard(_board);
 
         for (var col = 0; col < _width; col++)
         {
             for (var row = 0; row < _height - 1; row++)
             {
-                AddConstraint(new JigsawConnection(_variables[row, col], _variables[row + 1, col], true, _board));
+                AddConstraint(new JigsawConnection(_variables[row, col], _variables[row + 1, col], true));
             }
         }
 
@@ -102,7 +104,7 @@ public class AmbiguousJigsaw : Model
         {
             for (var row = 0; row < _height; row++)
             {
-                AddConstraint(new JigsawConnection(_variables[row, col], _variables[row, col + 1], false, _board));
+                AddConstraint(new JigsawConnection(_variables[row, col], _variables[row, col + 1], false));
             }
         }
 
