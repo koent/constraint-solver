@@ -44,7 +44,7 @@ public class Variable
 
     public bool Update(IEnumerable<int> newDomain)
     {
-        var newDomainList = newDomain.ToList();
+        var newDomainList = _domain.Intersect(newDomain).ToList();
         var updated = newDomainList.Count < _domain.Count;
         _domain = newDomainList;
         return updated;
