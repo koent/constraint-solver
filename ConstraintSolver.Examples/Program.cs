@@ -1,6 +1,5 @@
 ﻿using System;
 using ConstraintSolver.Core.Solving;
-using ConstraintSolver.Examples.AmbiguousJigsaws;
 
 namespace ConstraintSolver.Examples;
 
@@ -12,11 +11,9 @@ public static class Program
 
     public static void Main()
     {
-        // var model = new Tectonic(Tectonic.Large20240717);
+        var model = new Tectonic(Tectonic.Large20240717);
 
         // var model = new Sudoku(Sudoku.Puzzle7x7);
-
-        var model = new AmbiguousJigsaw(AmbiguousJigsaw.ParkerJigsaw);
 
         model.PrintStatistics();
         Console.WriteLine();
